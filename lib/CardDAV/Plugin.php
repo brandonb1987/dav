@@ -119,8 +119,8 @@ class Plugin extends DAV\ServerPlugin
         $node = $this->server->tree->getNodeForPath($uri);
         if ($node instanceof IAddressBook || $node instanceof ICard) {
             return [
-                 '{'.self::NS_CARDDAV.'}addressbook-multiget',
-                 '{'.self::NS_CARDDAV.'}addressbook-query',
+                '{'.self::NS_CARDDAV.'}addressbook-multiget',
+                '{'.self::NS_CARDDAV.'}addressbook-query',
             ];
         }
 
@@ -798,7 +798,7 @@ class Plugin extends DAV\ServerPlugin
      *
      * @return string
      */
-    protected function convertVCard($data, $target, array $propertiesFilter = null)
+    protected function convertVCard($data, $target, ?array $propertiesFilter = null)
     {
         if (is_resource($data)) {
             $data = stream_get_contents($data);
