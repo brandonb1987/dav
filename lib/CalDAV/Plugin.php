@@ -441,22 +441,15 @@ class Plugin extends DAV\ServerPlugin
                 if ($report->expand) {
                     // We're expanding, and for that we need to figure out the
                     // calendar's timezone.
-                    list($calendarPath) = Uri\split($uri);
-                    if (!isset($timeZones[$calendarPath])) {
-                        // Checking the calendar-timezone property.
-                        $tzProp = '{'.self::NS_CALDAV.'}calendar-timezone';
-                        $tzResult = $this->server->getProperties($calendarPath, [$tzProp]);
-                        if (isset($tzResult[$tzProp])) {
-                            // This property contains a VCALENDAR with a single
-                            // VTIMEZONE.
-                            $vtimezoneObj = VObject\Reader::read($tzResult[$tzProp]);
-                            $timeZone = $vtimezoneObj->VTIMEZONE->getTimeZone();
-                        } else {
-                            // Defaulting to UTC.
-                            $timeZone = new DateTimeZone('UTC');
-                        }
-                        $timeZones[$calendarPath] = $timeZone;
+                    $tzProp = '{'.self::NS_CALDAV.'}calendar-timezone';
+                    $tzResult = $this->server->getProperties($path, [$tzProp]);
+                    if (isset($tzResult[$tzProp])) {
+                        $calendarTimeZone = new DateTimeZone($tzResult[$tzProp]);
+                    } else {
+                        // Defaulting to UTC.
+                        $calendarTimeZone = new DateTimeZone('UTC');
                     }
+                }
 
                     $vObject = $vObject->expand($report->expand['start'], $report->expand['end'], $timeZones[$calendarPath]);
                 }
